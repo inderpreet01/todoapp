@@ -1,23 +1,47 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import TodoForm from './components/TodoForm';
+import TodoList from './components/TodoList';
 
 function App() {
+  const [tasks, setTasks] = useState([]);
+  const [taskIdCounter, setTaskIdCounter] = useState(1);
+
+  const addTask = (text) => {
+    setTasks([
+      ...tasks,
+      {
+        id: taskIdCounter,
+        text,
+        completed: false,
+      },
+    ]);
+    setTaskIdCounter(taskIdCounter + 1);
+  };
+
+  const deleteTask = (id) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  const toggleComplete = (id) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="app-container">
+        <h1 className="app-title">To-Do List</h1>
+        <TodoForm addTask={addTask} />
+        <TodoList
+          tasks={tasks}
+          onDelete={deleteTask}
+          onToggleComplete={toggleComplete}
+        />
+      </div>
     </div>
   );
 }
